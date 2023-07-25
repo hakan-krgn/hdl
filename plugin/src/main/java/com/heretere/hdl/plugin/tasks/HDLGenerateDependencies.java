@@ -1,13 +1,12 @@
 package com.heretere.hdl.plugin.tasks;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.heretere.hdl.common.constants.DefaultRepository;
+import com.heretere.hdl.common.json.HDLConfig;
+import com.heretere.hdl.common.json.Repository;
+import com.heretere.hdl.common.json.ResolvedDependency;
+import lombok.val;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -31,16 +30,15 @@ import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository;
 import org.gradle.api.tasks.TaskAction;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.heretere.hdl.common.constants.DefaultRepository;
-import com.heretere.hdl.common.json.HDLConfig;
-import com.heretere.hdl.common.json.Repository;
-import com.heretere.hdl.common.json.ResolvedDependency;
-
-import lombok.val;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HDLGenerateDependencies extends DefaultTask {
+
     private final Configuration hdlConfiguration;
     private final Path tmpRepo;
     private final List<RemoteRepository> repositories;
@@ -73,16 +71,16 @@ public class HDLGenerateDependencies extends DefaultTask {
         this.repositories.clear();
 
         this.getProject()
-            .getRepositories()
-            .stream()
-            .filter(MavenArtifactRepository.class::isInstance)
-            .filter(repo -> !repo.getName().equals(DefaultRepository.MAVEN_LOCAL.getId()))
-            .map(repo -> {
-                val mavenRepo = (MavenArtifactRepository) repo;
-                return new RemoteRepository.Builder(mavenRepo.getName(), "default", mavenRepo.getUrl().toString())
-                    .build();
-            })
-            .forEach(this.repositories::add);
+                .getRepositories()
+                .stream()
+                .filter(MavenArtifactRepository.class::isInstance)
+                .filter(repo -> !repo.getName().equals(DefaultRepository.MAVEN_LOCAL.getId()))
+                .map(repo -> {
+                    val mavenRepo = (MavenArtifactRepository) repo;
+                    return new RemoteRepository.Builder(mavenRepo.getName(), "default", mavenRepo.getUrl().toString())
+                            .build();
+                })
+                .forEach(this.repositories::add);
     }
 
     private void getAllDependencies(Artifact artifact) throws DependencyResolutionException {
@@ -116,8 +114,8 @@ public class HDLGenerateDependencies extends DefaultTask {
             } else {
                 repoId = defaultRepo.getId();
                 this.hdlConfigBuilder.repository(
-                    repoId,
-                    defaultRepo.getRepository()
+                        repoId,
+                        defaultRepo.getRepository()
                 );
             }
 
@@ -131,9 +129,9 @@ public class HDLGenerateDependencies extends DefaultTask {
         this.initRepos();
 
         val dependencies = this.hdlConfiguration.getAllDependencies()
-            .stream()
-            .filter(dependency -> dependency.getGroup() != null && dependency.getVersion() != null)
-            .collect(Collectors.toSet());
+                .stream()
+                .filter(dependency -> dependency.getGroup() != null && dependency.getVersion() != null)
+                .collect(Collectors.toSet());
 
         for (val dependency : dependencies) {
             assert !(dependency instanceof ProjectDependency) : "HDL doesn't support project dependencies.";
@@ -141,7 +139,7 @@ public class HDLGenerateDependencies extends DefaultTask {
 
         for (val dependency : dependencies) {
             this.getAllDependencies(
-                new DefaultArtifact(dependency.getGroup() + ":" + dependency.getName() + ":" + dependency.getVersion())
+                    new DefaultArtifact(dependency.getGroup() + ":" + dependency.getName() + ":" + dependency.getVersion())
             );
         }
 
@@ -151,8 +149,8 @@ public class HDLGenerateDependencies extends DefaultTask {
         Files.createDirectories(resourcesDir);
         Files.createFile(resourcesFile);
         mapper.writeValue(
-            resourcesDir.resolve("hdl_dependencies.json").toFile(),
-            this.hdlConfigBuilder.build()
+                resourcesDir.resolve("hdl_dependencies.json").toFile(),
+                this.hdlConfigBuilder.build()
         );
     }
 }

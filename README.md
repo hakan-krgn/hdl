@@ -17,7 +17,8 @@
 
 ### Description
 
-Heretere's Dependency Loader is a runtime maven dependency handler. It has powered using a Gradle plugin to make solving transitive dependencies simple.
+Heretere's Dependency Loader is a runtime maven dependency handler. It has powered using a Gradle plugin to make solving
+transitive dependencies simple.
 
 ### Why?
 
@@ -25,6 +26,7 @@ Certain websites have capped jar sizes, this library allows you to supply a much
 the amount of libraries you use in your project.
 
 ### Documentation
+
 - [Wiki](https://github.com/heretere/hdl/wiki)
 
 ---
@@ -71,7 +73,7 @@ The plugin will automatically include the core dependency so you can invoke it a
 			boolean success = loader.loadDependencies();
 			
 			if (!success) {
-				throw new RuntimeException("Failed to load dependencies")
+				throw new RuntimeException("Failed to load dependencies");
 				
 				//dependencies successfully loaded
 			}
@@ -105,6 +107,7 @@ Usage without Gradle plugin
     <version>Version</version>
 </dependency>
 ```
+
 </details>
 <details open>
 <summary>Gradle</summary>
@@ -128,4 +131,5 @@ dependencies {
     implementation 'com.heretere.hdl:bukkit:Version'
 }
 ```
+
 </details>

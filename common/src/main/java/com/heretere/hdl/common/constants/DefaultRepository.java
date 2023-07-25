@@ -1,12 +1,11 @@
 package com.heretere.hdl.common.constants;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-
 import com.heretere.hdl.common.json.Repository;
-
 import lombok.Getter;
 import lombok.NonNull;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Getter
 public enum DefaultRepository {
@@ -28,15 +27,15 @@ public enum DefaultRepository {
 
     public static DefaultRepository fromId(@NonNull String id) {
         return Arrays.stream(DefaultRepository.values())
-            .filter(repository -> repository.getId().equals(id))
-            .findFirst()
-            .orElse(null);
+                .filter(repository -> repository.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public static DefaultRepository fromURLString(@NonNull String url) {
         return Arrays.stream(DefaultRepository.values())
-            .filter(repository -> repository.getRepository().getUrls().stream().anyMatch(url::equals))
-            .findFirst()
-            .orElse(null);
+                .filter(repository -> repository.getRepository().getUrls().stream().anyMatch(url::equals))
+                .findFirst()
+                .orElse(null);
     }
 }

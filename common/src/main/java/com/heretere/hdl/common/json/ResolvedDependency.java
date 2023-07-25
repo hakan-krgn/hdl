@@ -12,6 +12,7 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class ResolvedDependency {
+
     private String relativeUrl;
     private String repositoryId;
     private String fileName;

@@ -1,18 +1,17 @@
 package com.heretere.hdl.plugin;
 
-import java.util.Objects;
-
+import com.heretere.hdl.plugin.tasks.HDLGenerateDependencies;
+import com.heretere.hdl.plugin.tasks.HDLPackageRuntime;
+import lombok.NonNull;
+import lombok.val;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 
-import com.heretere.hdl.plugin.tasks.HDLGenerateDependencies;
-import com.heretere.hdl.plugin.tasks.HDLPackageRuntime;
-
-import lombok.NonNull;
-import lombok.val;
+import java.util.Objects;
 
 public class HDLPlugin implements Plugin<Project> {
+
     private Configuration createHDLConfig(Project target) {
         target.getPluginManager().apply("java");
 
@@ -30,15 +29,15 @@ public class HDLPlugin implements Plugin<Project> {
         val implementationConfig = target.getConfigurations().findByName("implementation");
 
         Objects.requireNonNull(
-            implementationConfig,
-            "implementation configuration not found... is the java plugin applied?"
+                implementationConfig,
+                "implementation configuration not found... is the java plugin applied?"
         );
 
         val dependency = target.getDependencies()
-            .add(
-                hdlDependencyConfig.getName(),
-                extension.isBukkit() ? "com.heretere.hdl:bukkit:+" : "com.heretere.hdl:core:+"
-            );
+                .add(
+                        hdlDependencyConfig.getName(),
+                        extension.isBukkit() ? "com.heretere.hdl:bukkit:+" : "com.heretere.hdl:core:+"
+                );
 
         implementationConfig.getDependencies().add(dependency);
         hdlDependencyConfig.getDependencies().add(dependency);
@@ -54,25 +53,25 @@ public class HDLPlugin implements Plugin<Project> {
         target.afterEvaluate(t -> {
             val runtimeConfig = this.addHDLDependency(target, extension);
             val generateDependencies = target.getTasks()
-                .create("hdlGenerateDependencies", HDLGenerateDependencies.class, hdlConfig);
+                    .create("hdlGenerateDependencies", HDLGenerateDependencies.class, hdlConfig);
             val packageRuntime = target.getTasks()
-                .create("hdlPackageRuntime", HDLPackageRuntime.class, runtimeConfig);
+                    .create("hdlPackageRuntime", HDLPackageRuntime.class, runtimeConfig);
 
             generateDependencies.setGroup("hdl");
             packageRuntime.setGroup("hdl");
 
             packageRuntime
-                .dependsOn(generateDependencies);
+                    .dependsOn(generateDependencies);
 
             target.getTasks()
-                .getByName("jar")
-                .dependsOn(packageRuntime);
+                    .getByName("jar")
+                    .dependsOn(packageRuntime);
 
             val shadowJar = target.getTasks().findByName("shadowJar");
 
             if (shadowJar != null) {
                 shadowJar
-                    .dependsOn(packageRuntime);
+                        .dependsOn(packageRuntime);
             }
         });
     }
