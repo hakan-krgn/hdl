@@ -14,7 +14,7 @@ nexusPublishing {
 
 allprojects {
     group = "com.heretere.hdl"
-    version = "2.0.1"
+    version = "2.0.2"
     description = "Runtime dependency loading library"
 
     repositories {
