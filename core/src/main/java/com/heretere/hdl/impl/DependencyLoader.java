@@ -64,7 +64,7 @@ public class DependencyLoader {
         this.loadPrivateDependencies();
 
         HDLConfig config = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
-                this.classLoader.getResourceAsStream("hdl_dependencies.json"),
+                this.classLoader.getResourceAsStream("dependencies.json"),
                 HDLConfig.class
         );
 
