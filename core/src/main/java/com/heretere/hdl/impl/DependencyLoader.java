@@ -15,6 +15,12 @@ import java.util.Set;
 
 public class DependencyLoader {
 
+    public static void load(String basePath) {
+        new DependencyLoader(basePath).load();
+    }
+
+
+
     private static final Set<AbstractMap.SimpleImmutableEntry<String, String>> privateDependencies = new HashSet<>();
 
     static {

@@ -2,16 +2,19 @@ package com.heretere.hdl.impl.utils;
 
 import com.heretere.hdl.common.json.Repository;
 import com.heretere.hdl.common.json.ResolvedDependency;
+import sun.misc.Unsafe;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Collection;
 
-public final class DependencyUtils {
+public class DependencyUtils {
 
     public static void downloadJar(String base,
                                    Repository repository,
@@ -45,7 +48,27 @@ public final class DependencyUtils {
             method.invoke(classLoader, url);
             method.setAccessible(false);
         } catch (Exception e) {
-            e.printStackTrace();
+            try {
+                Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+                unsafeField.setAccessible(true);
+                Unsafe unsafe = (sun.misc.Unsafe) unsafeField.get(null);
+
+                Object ucp = fetchField(unsafe, URLClassLoader.class, classLoader, "ucp");
+                Collection<URL> unopenedURLs = (Collection<URL>) fetchField(unsafe, ucp.getClass(), ucp, "unopenedUrls");
+                Collection<URL> pathURLs = (Collection<URL>) fetchField(unsafe, ucp.getClass(), ucp, "path");
+
+                unopenedURLs.add(new File(base, dependency.getFileName()).toURI().toURL());
+                pathURLs.add(new File(base, dependency.getFileName()).toURI().toURL());
+            } catch (Exception ignored) {
+
+            }
         }
+    }
+
+    private static Object fetchField(Unsafe unsafe, final Class<?> clazz, final Object object, final String name)
+            throws NoSuchFieldException {
+        Field field = clazz.getDeclaredField(name);
+        long offset = unsafe.objectFieldOffset(field);
+        return unsafe.getObject(object, offset);
     }
 }
