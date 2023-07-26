@@ -64,21 +64,22 @@ The plugin will automatically include the core dependency so you can invoke it a
 ## Main Class
 
 ```java
-	import com.heretere.hdl.impl.DependencyLoader;
+    import com.heretere.hdl.impl.DependencyLoader;
 
-	public class Main {
-		public static void main(String[] args) {
-			DependencyLoader loader = new DependencyLoader(/*Define a dependency directory path here*/);
-			
-			boolean success = loader.loadDependencies();
-			
-			if (!success) {
-				throw new RuntimeException("Failed to load dependencies");
-				
-				//dependencies successfully loaded
-			}
-		}
-	}
+public class Main {
+
+    public static void main(String[] args) {
+        DependencyLoader loader = new DependencyLoader(/*Define a dependency directory path here*/);
+
+        boolean success = loader.loadDependencies();
+
+        if (!success) {
+            throw new RuntimeException("Failed to load dependencies");
+
+            //dependencies successfully loaded
+        }
+    }
+}
 ```
 
 ---
